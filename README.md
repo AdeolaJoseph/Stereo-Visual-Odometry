@@ -1,6 +1,6 @@
 # Stereo Visual Odometry
 
-This project is an implementation of Stereo Visual Odometry (SVO) in Python using OpenCV. SVO is a method used in computer vision and robotics to estimate the 3D pose (position and orientation) of a camera relative to its starting position, using only the images captured by the camera.
+This project is an implementation of Stereo Visual Odometry (SVO) pipeline using KITTI Dataset. SVO is a method used in computer vision and robotics to estimate the 3D pose (position and orientation) of a camera relative to its starting position, using only the images captured by the camera.
 
 ## Features
 
