@@ -30,14 +30,13 @@ class Plotter:
         Returns:
             np.ndarray: The image with the matches drawn on it.
         """
-        # Draw all matches
-        img = cv2.drawMatchesKnn(image0, kp1, image1, kp2, matches, None, flags=2)
+        # Create a new image to draw matches
+        result_image = cv2.drawMatches(image0, None, image1, None, matches, None)
 
-        # Show the image
-        plt.imshow(img)
-        if plot_title:
-            plt.title(plot_title)
-        plt.show()
+        # Display the image with matches
+        cv2.imshow('Matches', result_image)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
     def draw_keypoints(self, image: np.ndarray, keypoints: list, plot_title: str = None) -> None:
         """
@@ -53,40 +52,11 @@ class Plotter:
         """
         # Draw keypoints on the image
         image = cv2.drawKeypoints(image, keypoints, None, flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-
-        # Show the image
-        plt.imshow(image)
-        if plot_title:
-            plt.title(plot_title)
-        plt.show()
-
-    def plot_trajectory(self, translation_history: list, plot_title: str = None) -> None:
-        """
-        Plots the trajectory of the camera.
-
-        Parameters:
-            translation_history (list): The poses of the camera.
-            plot_title (str): The title of the plot.
-        """
-        fig = plt.figure()
-        ax = fig.add_subplot(111, projection='3d')
-
-        # for point in translation_history:
-        #     # flatten the point
-        #     point = point.flatten()
-        #     ax.scatter(point[0], point[1], point[2], c='r', marker='o')
-
-        xs = [point[0] for point in translation_history]
-        ys = [point[1] for point in translation_history]
-        zs = [point[2] for point in translation_history]
-
-        ax.plot(xs, ys, zs, c='r')
-
-        ax.set_xlabel('X Label')
-        ax.set_ylabel('Y Label')
-        ax.set_zlabel('Z Label')
-
-        if plot_title:
-            plt.title(plot_title)
-        plt.show()
+        
+        # Display the image with keypoints
+        cv2.imshow('KeyPoints', image)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+        
+        return image
     
