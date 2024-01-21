@@ -8,3 +8,13 @@
   1. Create some nice plots
   2. Attempt the bonus tasks
   3. Evaluate performance
+
+- Plotting and eval
+  1. eval/plot_poses.py:
+     - Call function plot_trajectory with ground truth file path, estimated file path
+     - Creates an interactive 3D plot of the two trajectories
+  2. compute_metrics.py
+     - Define the base folder. It should contain pose files in format 00_gt.txt and 00_estimated.txt
+     - Define the folder where you want to save results
+     - runs evaluation on all pose files, plots a lot of stuff and saves the results
+     - first for loop for APE, and second for RPE
