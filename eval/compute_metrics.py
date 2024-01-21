@@ -29,3 +29,15 @@ for gt_file in gt_files:
             subprocess.run(command, shell=True, check=True)
         except subprocess.CalledProcessError as e:
             print(f"Command failed with error: {e}")
+
+# for RPE
+for gt_file in gt_files:
+    est_file = gt_file.split('_')[0]+estimated_ext
+    if est_file in est_files:
+
+        # plot and save metrics (RPE)
+        command = f"evo_rpe kitti {os.path.join(base_path,gt_file)} {os.path.join(base_path,est_file)} --delta 5 --delta_unit f --plot --pose_relation trans_part"
+        try:
+            subprocess.run(command, shell=True, check=True)
+        except subprocess.CalledProcessError as e:
+            print(f"Command failed with error: {e}")
