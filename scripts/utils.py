@@ -1,3 +1,4 @@
+import os
 import ast
 import sys
 import subprocess
@@ -53,6 +54,17 @@ def install_requirements(filepath):
     """
     installer = RequirementsInstaller(filepath)
     installer.install_packages()
+
+
+def create_dir(dir_path):
+    """
+    Creates a directory if it does not exist.
+
+    Args:
+        dir_path (str): The path to the directory.
+    """
+    if not os.path.exists(dir_path):
+        os.makedirs(dir_path)
 
 
 if __name__ == "__main__":
