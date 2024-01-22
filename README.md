@@ -58,8 +58,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 Manually flipped to correct the mirror around z issue
 
 <p align="center">
- <img src="results/plots/1p_flipped.png" alt="testing" height="500">
- <img src="results/plots/1p.png" alt="testing" height="500">
+ <img src="results/plots/1p_flipped.png" alt="testing" height="300">
+ <img src="results/plots/1p.png" alt="testing" height="300">
 </p>
 ### APE vs RPE
 
