@@ -58,16 +58,17 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 Manually flipped to correct the mirror around z issue
 
 <p align="center">
- <img src="results/plots/1p_flipped.png" alt="testing" height="300">
- <img src="results/plots/1p.png" alt="testing" height="300">
+ <img src="results/plots/1p_flipped.png" alt="testing" height="400">
+ <img src="results/plots/1p.png" alt="testing" height="400">
 </p>
+
 ### APE vs RPE
 
 The following figure shows the APE error on sequence 01. APE tries to fit the estimated trajectory over the ground truth, and then compute the metrics. This is not ideal as the drift is minimal in beginning and higher in the end and APE is punishing the trajectory in the beginning. It does not compute local trajectory errors. 
 
 <p align="center">
- <img src="results/plots/1p.png" alt="testing" height="300">
- <img src="results/plots/1ape2.png" alt="testing" height="300">
+ <img src="results/plots/1p.png" alt="testing" height="400">
+ <img src="results/plots/1ape2.png" alt="testing" height="400">
 </p>
 Also, it will be sensitive to outlier poses as it is trying to force the two trajectories to align. Should the odometry be strictly penalized if after a couple of turns it had a few degree error but after that performed flawlessly? [Ivan]
 
