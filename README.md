@@ -59,19 +59,19 @@ For evaluation with others, its better to use APE as it is standardized.
 
 ### Compiled Results:
 
-| Sequence | APE - rmse (m) | APE - rmse (%) |
+| Sequence | APE - rmse | APE - rmse (%) |
 |----------|----------|----------|
-| 00 | 46.71 | 1.25 | 
-| 01 | NA | NA |
-| 02 | 141.11 | 2.78 |
-| 03 | 9.15 | 1.63 |
-| 04 | 2.77 | NA |
+| 00 | 46.71 | 1.25 |
+| 01 | NA | NA | 
+| 02 | 141.11 | 2.7 |
+| 03 | 9.15 | 1.53 | 
+| 04 | NA | NA |
 | 05 | 12.02 | 0.55 |
-| 06 | 3.94 | 0.32 |
-| 07 | 6.2 | 0.89 |
+| 06 | NA | NA | 
+| 07 | 6.2 | 0.89 | 
 | 08 | 13.27 | 0.41 |
-| 09 | 16.82 | 0.99 |
-| 10 | 9.07 | 0.99 |
+| 09 | 16.82 | 1.11 |
+| 10 | 9.07 | 0.65 | 
 
 
 
@@ -146,8 +146,7 @@ For evaluation with others, its better to use APE as it is standardized.
 
 - RPE 
 
-<img src="results/plots/6rpe1.png" alt="testing" height="200">
-<img src="results/plots/6rpe2.png" alt="testing" height="200">
+=
 
 ### 07
 
