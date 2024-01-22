@@ -26,6 +26,12 @@ This project is an implementation of Stereo Visual Odometry (SVO) pipeline using
 3. Run the main script:
 ```python stereo_odometry.py```
 
+4. Run eval scripts
+
+ - Copy paste the result in the eval/result folder
+ - Navigate to eval folder
+ - Run ```python compute_metrics.py```
+
 Please see devnotes.md for an explanation of current files, bugs, evaluation scripts etc.
 
 ## Authors
