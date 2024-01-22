@@ -49,9 +49,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Results
 
 ### 3D Plots
-
-<img src="results/plots/0_3d.png" alt="testing" height="300">
-
+<p align="center">
+ <img src="results/plots/0_3d.png" alt="testing" height="500">
+</p>
 ### Flip Issue
 
 Manually flipped to correct the mirror around z issue
