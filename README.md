@@ -52,13 +52,15 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 <p align="center">
  <img src="results/plots/0_3d.png" alt="testing" height="500">
 </p>
+
 ### Flip Issue
 
 Manually flipped to correct the mirror around z issue
 
-<img src="results/plots/1p_flipped.png" alt="testing" height="200">
-<img src="results/plots/1p.png" alt="testing" height="200">
-
+<p align="center">
+ <img src="results/plots/1p_flipped.png" alt="testing" height="500">
+ <img src="results/plots/1p.png" alt="testing" height="500">
+</p>
 ### APE vs RPE
 
 The following figure shows the APE error on sequence 01. APE tries to fit the estimated trajectory over the ground truth, and then compute the metrics. This is not ideal as the drift is minimal in beginning and higher in the end and APE is punishing the trajectory in the beginning. It does not compute local trajectory errors. 
