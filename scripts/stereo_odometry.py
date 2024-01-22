@@ -11,6 +11,8 @@ from tabulate import tabulate
 
 from typing import Tuple, Dict, List
 
+from plot_poses import plot_trajectory
+
 
 class StereoOdometry:
     """
@@ -431,16 +433,18 @@ class StereoOdometry:
             previous_right_image = right_image
 
         # Plot the final trajectory
-        self.plot_trajectory(self.translation_history, image_index)
+        # self.plot_trajectory(self.translation_history, image_index)
 
     def main(self):
         # Create the results directory if it does not exist
         create_dir(self.results_dir)
-        with open(os.path.join(self.results_dir, f"{self.sequence:02d}.txt"), "w") as p_results:
+        with open(os.path.join(self.results_dir, f"{self.sequence:02d}_est.txt"), "w") as p_results:
             self.run(p_results)
 
-        print(f"Results written to {os.path.join(self.results_dir, f'{self.sequence:02d}.txt')}")
+        print(f"Results written to {os.path.join(self.results_dir, f'{self.sequence:02d}_est.txt')}")
         
+        plot_trajectory(os.path.join(self.results_dir, f"{self.sequence:02d}_gt.txt"), 
+                        estimated_path = os.path.join(self.results_dir, f"{self.sequence:02d}_est.txt"))
 
 if __name__ == "__main__":
     pose_estimator = StereoOdometry()

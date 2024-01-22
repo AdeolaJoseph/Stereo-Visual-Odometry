@@ -84,5 +84,5 @@ def plot_trajectory(gt_path, estimated_path, draw_viewframes = True, step=200,sc
 
 
 plot_trajectory(gt_path = 'eval/results/00_gt.txt', 
-                estimated_path = 'eval/results/00_est.txt',
+                estimated_path = 'eval/results/00_flip.txt',
                 draw_viewframes = True)

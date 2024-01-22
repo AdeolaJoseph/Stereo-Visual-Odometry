@@ -39,7 +39,7 @@ def compute_ape_perc(gt_path, ape_rmse):
     return round((ape_rmse/leng) * 100.0,2)
 
 ape_rmse = [46.661090,
-            1176.512009,
+            35.568948,
             136.996024,
             8.606559,
             2.772325,
