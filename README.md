@@ -94,18 +94,24 @@ For evaluation with others, its better to use APE as it is standardized.
 
 
 
+
 ### 00
 
 - APE 
 
-<img src="results/plots/0p.png" alt="testing" height="200">
-<img src="results/plots/0ape2.png" alt="testing" height="200">
-<img src="results/plots/0ape1.png" alt="testing" height="200">
+<div style="display: flex; justify-content: center;">
+  <img src="results/plots/0p.png" alt="testing" height="400">
+  <img src="results/plots/0ape2.png" alt="testing" height="400">
+  <img src="results/plots/0ape1.png" alt="testing" height="400">
+</div>
 
 - RPE 
 
-<img src="results/plots/0rpe1.png" alt="testing" height="200">
-<img src="results/plots/0rpe2.png" alt="testing" height="200">
+<div style="display: flex; justify-content: center;">
+  <img src="results/plots/0rpe1.png" alt="testing" height="400">
+  <img src="results/plots/0rpe2.png" alt="testing" height="400">
+</div>
+
 
 ### 01
 
