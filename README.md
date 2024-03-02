@@ -129,7 +129,7 @@ For evaluation with others, it is better to use APE as it is standardized.
 
 <table>
   <tr>
-    <td colspan="2" style="text-align:center;">
+    <td colspan="2" style="display: flex; justify-content: center; text-align:center;">
       <img src="results/plots/0p.png" alt="Two Lines" width="350">
       <p>Estimated Trajectory and Groundtruth Trajectory</p>
     </td>
