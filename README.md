@@ -99,35 +99,6 @@ For evaluation with others, it is better to use APE as it is standardized.
 ### 00
 
 <table>
- <tr>
-    <td>
-      <img src="results/plots/0p.png" alt="Two Lines" width="350">
-      <p>Estimated Trajectory and Groundtruth Trajectory</p>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <img src="results/plots/0ape1.png" alt="testing" width="350">
-      <p>Absolute Pose Error</p>
-    </td>
-    <td>
-      <img src="results/plots/0ape2.png" alt="testing" width="350">
-      <p>Absolute Pose Error</p>
-    </td>
-  </tr>
-   <tr>
-    <td>
-      <img src="results/plots/0rpe1.png" alt="testing" width="350">
-      <p>Relative Pose Error</p>
-    </td>
-    <td>
-      <img src="results/plots/0rpe2.png" alt="testing" width="350">
-      <p>Absolute Pose Error</p>
-    </td>
-  </tr>
-</table>
-
-<table>
   <tr>
     <td colspan="2" style="display: flex; justify-content: center; text-align:center;">
       <img src="results/plots/0p.png" alt="Two Lines" width="350">
@@ -151,7 +122,7 @@ For evaluation with others, it is better to use APE as it is standardized.
     </td>
     <td style="text-align:center;">
       <img src="results/plots/0rpe2.png" alt="testing" width="350">
-      <p>Absolute Pose Error</p>
+      <p>Relative Pose Error</p>
     </td>
   </tr>
 </table>
@@ -161,57 +132,97 @@ For evaluation with others, it is better to use APE as it is standardized.
 
 ### 01
 
-- APE 
-
-<div style="display: flex; justify-content: center;">
-  <img src="results/plots/1p.png" alt="testing" height="400">
-  <img src="results/plots/1ape2.png" alt="testing" height="400">
-  <img src="results/plots/1ape1.png" alt="testing" height="400">
-</div>
-
-- RPE 
-
-<div style="display: flex; justify-content: center;">
-  <img src="results/plots/1rpe1.png" alt="testing" height="400">
-  <img src="results/plots/1rpe2.png" alt="testing" height="400">
-</div>
-
-
-<p align="center">
+<table>
+  <tr>
+    <td colspan="2" style="display: flex; justify-content: center; text-align:center;">
+      <img src="results/plots/1p.png" alt="Two Lines" width="350">
+      <p>Estimated Trajectory and Groundtruth Trajectory</p>
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">
+      <img src="results/plots/1ape1.png" alt="testing" width="350">
+      <p>Absolute Pose Error</p>
+    </td>
+    <td style="text-align:center;">
+      <img src="results/plots/1ape2.png" alt="testing" width="350">
+      <p>Absolute Pose Error</p>
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">
+      <img src="results/plots/1rpe1.png" alt="testing" width="350">
+      <p>Relative Pose Error</p>
+    </td>
+    <td style="text-align:center;">
+      <img src="results/plots/1rpe2.png" alt="testing" width="350">
+      <p>Relative Pose Error</p>
+    </td>
+  </tr>
+</table>
 
 ### 02
 
+<table>
+  <tr>
+    <td colspan="2" style="display: flex; justify-content: center; text-align:center;">
+      <img src="results/plots/2p.png" alt="Two Lines" width="350">
+      <p>Estimated Trajectory and Groundtruth Trajectory</p>
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">
+      <img src="results/plots/2ape1.png" alt="testing" width="350">
+      <p>Absolute Pose Error</p>
+    </td>
+    <td style="text-align:center;">
+      <img src="results/plots/2ape2.png" alt="testing" width="350">
+      <p>Absolute Pose Error</p>
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">
+      <img src="results/plots/2rpe1.png" alt="testing" width="350">
+      <p>Relative Pose Error</p>
+    </td>
+    <td style="text-align:center;">
+      <img src="results/plots/2rpe2.png" alt="testing" width="350">
+      <p>Relative Pose Error</p>
+    </td>
+  </tr>
+</table>
 - APE 
-
-<div style="display: flex; justify-content: center;">
-  <img src="results/plots/2p.png" alt="testing" height="400">
-  <img src="results/plots/2ape2.png" alt="testing" height="400">
-  <img src="results/plots/2ape1.png" alt="testing" height="400">
-</div>
-
-- RPE 
-
-<div style="display: flex; justify-content: center;">
-  <img src="results/plots/2rpe1.png" alt="testing" height="400">
-  <img src="results/plots/2rpe2.png" alt="testing" height="400">
-</div>
 
 ### 03
 
-- APE 
-
-<div style="display: flex; justify-content: center;">
-  <img src="results/plots/3p.png" alt="testing" height="400">
-  <img src="results/plots/3ape2.png" alt="testing" height="400">
-  <img src="results/plots/3ape1.png" alt="testing" height="400">
-</div>
-
-- RPE 
-
-<div style="display: flex; justify-content: center;">
-  <img src="results/plots/3rpe1.png" alt="testing" height="400">
-  <img src="results/plots/3rpe2.png" alt="testing" height="400">
-</div>
+<table>
+  <tr>
+    <td colspan="2" style="display: flex; justify-content: center; text-align:center;">
+      <img src="results/plots/3p.png" alt="Two Lines" width="350">
+      <p>Estimated Trajectory and Groundtruth Trajectory</p>
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">
+      <img src="results/plots/3ape1.png" alt="testing" width="350">
+      <p>Absolute Pose Error</p>
+    </td>
+    <td style="text-align:center;">
+      <img src="results/plots/3ape2.png" alt="testing" width="350">
+      <p>Absolute Pose Error</p>
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">
+      <img src="results/plots/3rpe1.png" alt="testing" width="350">
+      <p>Relative Pose Error</p>
+    </td>
+    <td style="text-align:center;">
+      <img src="results/plots/3rpe2.png" alt="testing" width="350">
+      <p>Relative Pose Error</p>
+    </td>
+  </tr>
+</table>
 
 ### 04
 
@@ -221,20 +232,35 @@ For evaluation with others, it is better to use APE as it is standardized.
 
 ### 05
 
-- APE 
+<table>
+  <tr>
+    <td colspan="2" style="display: flex; justify-content: center; text-align:center;">
+      <img src="results/plots/5p.png" alt="Two Lines" width="350">
+      <p>Estimated Trajectory and Groundtruth Trajectory</p>
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">
+      <img src="results/plots/5ape1.png" alt="testing" width="350">
+      <p>Absolute Pose Error</p>
+    </td>
+    <td style="text-align:center;">
+      <img src="results/plots/5ape2.png" alt="testing" width="350">
+      <p>Absolute Pose Error</p>
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">
+      <img src="results/plots/5rpe1.png" alt="testing" width="350">
+      <p>Relative Pose Error</p>
+    </td>
+    <td style="text-align:center;">
+      <img src="results/plots/5rpe2.png" alt="testing" width="350">
+      <p>Relative Pose Error</p>
+    </td>
+  </tr>
+</table>
 
-<div style="display: flex; justify-content: center;">
-  <img src="results/plots/5p.png" alt="testing" height="400">
-  <img src="results/plots/5ape2.png" alt="testing" height="400">
-  <img src="results/plots/5ape1.png" alt="testing" height="400">
-</div>
-
-- RPE 
-
-<div style="display: flex; justify-content: center;">
-  <img src="results/plots/5rpe1.png" alt="testing" height="400">
-  <img src="results/plots/5rpe2.png" alt="testing" height="400">
-</div>
 
 ### 06
 
@@ -244,78 +270,125 @@ For evaluation with others, it is better to use APE as it is standardized.
 
 ### 07
 
-- APE 
+<table>
+  <tr>
+    <td colspan="2" style="display: flex; justify-content: center; text-align:center;">
+      <img src="results/plots/7p.png" alt="Two Lines" width="350">
+      <p>Estimated Trajectory and Groundtruth Trajectory</p>
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">
+      <img src="results/plots/7ape1.png" alt="testing" width="350">
+      <p>Absolute Pose Error</p>
+    </td>
+    <td style="text-align:center;">
+      <img src="results/plots/7ape2.png" alt="testing" width="350">
+      <p>Absolute Pose Error</p>
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">
+      <img src="results/plots/7rpe1.png" alt="testing" width="350">
+      <p>Relative Pose Error</p>
+    </td>
+    <td style="text-align:center;">
+      <img src="results/plots/7rpe2.png" alt="testing" width="350">
+      <p>Relative Pose Error</p>
+    </td>
+  </tr>
+</table>
 
-<div style="display: flex; justify-content: center;">
-  <img src="results/plots/7p.png" alt="testing" height="400">
-  <img src="results/plots/7ape2.png" alt="testing" height="400">
-  <img src="results/plots/7ape1.png" alt="testing" height="400">
-</div>
-
-- RPE 
-
-<div style="display: flex; justify-content: center;">
-  <img src="results/plots/7rpe1.png" alt="testing" height="400">
-  <img src="results/plots/7rpe2.png" alt="testing" height="400">
-</div>
 
 ### 08
 
-- APE 
-
-<div style="display: flex; justify-content: center;">
-  <img src="results/plots/8p.png" alt="testing" height="400">
-  <img src="results/plots/8ape2.png" alt="testing" height="400">
-  <img src="results/plots/8ape1.png" alt="testing" height="400">
-</div>
-
-- RPE 
-
-<div style="display: flex; justify-content: center;">
-  <img src="results/plots/8rpe1.png" alt="testing" height="400">
-  <img src="results/plots/8rpe2.png" alt="testing" height="400">
-</div>
+<table>
+  <tr>
+    <td colspan="2" style="display: flex; justify-content: center; text-align:center;">
+      <img src="results/plots/8p.png" alt="Two Lines" width="350">
+      <p>Estimated Trajectory and Groundtruth Trajectory</p>
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">
+      <img src="results/plots/8ape1.png" alt="testing" width="350">
+      <p>Absolute Pose Error</p>
+    </td>
+    <td style="text-align:center;">
+      <img src="results/plots/8ape2.png" alt="testing" width="350">
+      <p>Absolute Pose Error</p>
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">
+      <img src="results/plots/8rpe1.png" alt="testing" width="350">
+      <p>Relative Pose Error</p>
+    </td>
+    <td style="text-align:center;">
+      <img src="results/plots/8rpe2.png" alt="testing" width="350">
+      <p>Relative Pose Error</p>
+    </td>
+  </tr>
+</table>
 
 ### 09
 
-- APE 
-
-<div style="display: flex; justify-content: center;">
-  <img src="results/plots/9p.png" alt="testing" height="400">
-  <img src="results/plots/9ape2.png" alt="testing" height="400">
-  <img src="results/plots/9ape1.png" alt="testing" height="400">
-</div>
-
-- RPE 
-
-<div style="display: flex; justify-content: center;">
-  <img src="results/plots/9rpe1.png" alt="testing" height="400">
-  <img src="results/plots/9rpe2.png" alt="testing" height="400">
-</div>
+<table>
+  <tr>
+    <td colspan="2" style="display: flex; justify-content: center; text-align:center;">
+      <img src="results/plots/9p.png" alt="Two Lines" width="350">
+      <p>Estimated Trajectory and Groundtruth Trajectory</p>
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">
+      <img src="results/plots/9ape1.png" alt="testing" width="350">
+      <p>Absolute Pose Error</p>
+    </td>
+    <td style="text-align:center;">
+      <img src="results/plots/9ape2.png" alt="testing" width="350">
+      <p>Absolute Pose Error</p>
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">
+      <img src="results/plots/9rpe1.png" alt="testing" width="350">
+      <p>Relative Pose Error</p>
+    </td>
+    <td style="text-align:center;">
+      <img src="results/plots/9rpe2.png" alt="testing" width="350">
+      <p>Relative Pose Error</p>
+    </td>
+  </tr>
+</table>
 
 ### 10
 
-- APE 
-
-<div style="display: flex; justify-content: center;">
-  <img src="results/plots/10p.png" alt="testing" height="400">
-  <img src="results/plots/10ape2.png" alt="testing" height="400">
-  <img src="results/plots/10ape1.png" alt="testing" height="400">
-</div>
-
-- RPE 
-
-<div style="display: flex; justify-content: center;">
-  <img src="results/plots/10rpe1.png" alt="testing" height="400">
-  <img src="results/plots/10rpe2.png" alt="testing" height="400">
-</div>
-
-</p>
-
-
-
-
-
-
-
-
+<table>
+  <tr>
+    <td colspan="2" style="display: flex; justify-content: center; text-align:center;">
+      <img src="results/plots/10p.png" alt="Two Lines" width="350">
+      <p>Estimated Trajectory and Groundtruth Trajectory</p>
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">
+      <img src="results/plots/10ape1.png" alt="testing" width="350">
+      <p>Absolute Pose Error</p>
+    </td>
+    <td style="text-align:center;">
+      <img src="results/plots/10ape2.png" alt="testing" width="350">
+      <p>Absolute Pose Error</p>
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">
+      <img src="results/plots/10rpe1.png" alt="testing" width="350">
+      <p>Relative Pose Error</p>
+    </td>
+    <td style="text-align:center;">
+      <img src="results/plots/10rpe2.png" alt="testing" width="350">
+      <p>Relative Pose Error</p>
+    </td>
+  </tr>
+</table>
