@@ -1,6 +1,6 @@
 # Stereo Visual Odometry
 
-This project is an implementation of Stereo Visual Odometry (SVO) pipeline using KITTI Dataset. SVO is a method used in computer vision and robotics to estimate the 3D pose (position and orientation) of a camera relative to its starting position, using only the images captured by the camera.
+This project is an implementation of a Stereo Visual Odometry (SVO) pipeline using KITTI Dataset. SVO is a method used in computer vision and robotics to estimate the 3D pose (position and orientation) of a camera relative to its starting position, using only the images captured by the camera.
 
 ## Features
 
@@ -28,8 +28,8 @@ This project is an implementation of Stereo Visual Odometry (SVO) pipeline using
 
 4. Run eval scripts
 
- - Copy paste the result in the eval/result folder
- - Navigate to eval folder
+ - Copy and paste the result into the eval/result folder
+ - Navigate to the eval folder
  - Run ```python compute_metrics.py```
 
 Please see devnotes.md for an explanation of current files, bugs, evaluation scripts etc.
@@ -63,19 +63,19 @@ The following figure shows the APE error on sequence 01. APE tries to fit the es
   <tr>
     <td>
       <img src="results/plots/1p.png" alt="testing" width="350">
-      <p>Circle Formation</p>
+      <p>Estimated Trajectory and Groundtruth Trajectory</p>
     </td>
     <td>
       <img src="results/plots/1ape2.png" alt="testing" width="350">
-      <p>Line Formation</p>
+      <p>Absolute Pose Error</p>
     </td>
   </tr>
 </table>
-Also, it will be sensitive to outlier poses as it is trying to force the two trajectories to align. Should the odometry be strictly penalized if after a couple of turns it had a few degree error but after that performed flawlessly? [Ivan]
+Also, it will be sensitive to outlier poses as it is trying to force the two trajectories to align. Should the odometry be strictly penalized if after a couple of turns it had a few-degree error but after that performed flawlessly? [Ivan]
 
 RPE, on the other hand, captures local trajectory errors.
 
-For evaluation with others, its better to use APE as it is standardized.
+For evaluation with others, it is better to use APE as it is standardized.
 
 ### Compiled Results:
 
@@ -98,20 +98,34 @@ For evaluation with others, its better to use APE as it is standardized.
 
 ### 00
 
-- APE 
-
-<div style="display: flex; justify-content: center;">
-  <img src="results/plots/0p.png" alt="testing" height="400">
-  <img src="results/plots/0ape2.png" alt="testing" height="400">
-  <img src="results/plots/0ape1.png" alt="testing" height="400">
-</div>
-
-- RPE 
-
-<div style="display: flex; justify-content: center;">
-  <img src="results/plots/0rpe1.png" alt="testing" height="400">
-  <img src="results/plots/0rpe2.png" alt="testing" height="400">
-</div>
+<table>
+ <tr>
+    <td>
+      <img src="results/plots/0p.png" alt="Two Lines" width="350">
+      <p>Estimated Trajectory and Groundtruth Trajectory</p>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <img src="results/plots/0ape1.png" alt="testing" width="350">
+      <p>Absolute Pose Error</p>
+    </td>
+    <td>
+      <img src="results/plots/0ape2.png" alt="testing" width="350">
+      <p>Absolute Pose Error</p>
+    </td>
+  </tr>
+   <tr>
+    <td>
+      <img src="results/plots/0rpe1.png" alt="testing" width="350">
+      <p>Relative Pose Error</p>
+    </td>
+    <td>
+      <img src="results/plots/0rpe2.png" alt="testing" width="350">
+      <p>Absolute Pose Error</p>
+    </td>
+  </tr>
+</table>
 
 
 
