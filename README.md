@@ -127,6 +127,36 @@ For evaluation with others, it is better to use APE as it is standardized.
   </tr>
 </table>
 
+<table>
+  <tr>
+    <td colspan="2" style="text-align:center;">
+      <img src="results/plots/0p.png" alt="Two Lines" width="350">
+      <p>Estimated Trajectory and Groundtruth Trajectory</p>
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">
+      <img src="results/plots/0ape1.png" alt="testing" width="350">
+      <p>Absolute Pose Error</p>
+    </td>
+    <td style="text-align:center;">
+      <img src="results/plots/0ape2.png" alt="testing" width="350">
+      <p>Absolute Pose Error</p>
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">
+      <img src="results/plots/0rpe1.png" alt="testing" width="350">
+      <p>Relative Pose Error</p>
+    </td>
+    <td style="text-align:center;">
+      <img src="results/plots/0rpe2.png" alt="testing" width="350">
+      <p>Absolute Pose Error</p>
+    </td>
+  </tr>
+</table>
+
+
 
 
 ### 01
