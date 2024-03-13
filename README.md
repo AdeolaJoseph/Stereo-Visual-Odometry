@@ -2,6 +2,10 @@
 
 This project is an implementation of a Stereo Visual Odometry (SVO) pipeline using KITTI Dataset. SVO is a method used in computer vision and robotics to estimate the 3D pose (position and orientation) of a camera relative to its starting position, using only the images captured by the camera.
 
+<p align="center">
+ <img src="results/plots/0_3d.png" alt="testing" height="500">
+</p>
+
 ## Features
 
 - Feature detection using SIFT (Scale-Invariant Feature Transform)
@@ -47,13 +51,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 
 ## Results
-
-### 3D Plots
-<p align="center">
- <img src="results/plots/0_3d.png" alt="testing" height="500">
-</p>
-
-
 
 ### APE vs RPE
 

@@ -333,93 +333,106 @@ class StereoOdometry:
             None
         """
         is_paused = False
-        for image_index, (left_image, right_image) in enumerate(tqdm(self.dataloader)):
+        for idx, (current_image, image1) in enumerate(tqdm(self.dataloader)):
             # Convert the images to NumPy arrays
-            left_image = left_image.numpy().squeeze().astype(np.uint8)
-            right_image = right_image.numpy().squeeze().astype(np.uint8)
+            current_image = current_image.numpy().squeeze().astype(np.uint8)
 
-            if left_image is None or right_image is None:
+            if current_image is None:
                 break
-
-            # Save the first image to start feature matching with the second set
-            if image_index == 0:
+            # if image1 is None:
+            #     break    
+            #When you load the first  image, you have to save it to get the second set of images to start the feature matching  
+            if idx == 0:
                 self.save_pose_kitti(results_filepath, self.pose)
-                previous_left_image = left_image
-                previous_right_image = right_image
+                prev_image = current_image
+                # image1_prev = image1
                 continue
 
-            # Control for pausing the process
-            key_press = cv2.waitKey(1000000 if is_paused else 1)
-            if key_press == ord(' '):
-                is_paused = not is_paused
-
-            # Detect features in the previous and current left images
-            previous_left_keypoints, previous_left_descriptors = self.detect_features(previous_left_image)
-            previous_right_keypoints, previous_right_descriptors = self.detect_features(previous_right_image)
-            current_left_keypoints, current_left_descriptors = self.detect_features(left_image)
-
-            # Optional: Draw keypoints
-            if self.show_plots:
-                self.plotter.draw_keypoints(previous_left_image, previous_left_keypoints, self.plot_title("Keypoints", self.sequence, {"left": f"{image_index-1:06d}"}))
-                self.plotter.draw_keypoints(previous_right_image, previous_right_keypoints, self.plot_title("Keypoints", self.sequence, {"right": f"{image_index-1:06d}"}))
-
-            # Find matches between previous and current left images
-            left_matches = self.find_matches(previous_left_keypoints, current_left_keypoints, previous_left_descriptors, current_left_descriptors)
-            filtered_left_matches = self.filter_matches(left_matches, self.threshold)
-
-            # Optional: Draw matches
-            if self.show_plots:
-                self.plotter.draw_matches(previous_left_image, left_image, previous_left_keypoints, current_left_keypoints, filtered_left_matches, 
-                                self.plot_title("Matches", self.sequence, {"left": f"{image_index-1:06d}", "right": f"{image_index:06d}"}))
-
-            # Prepare data for tabulate
-            if self.show_tables:
-                table_data = []
-                for m in filtered_left_matches:
-                    # queryIdx is the index of the feature in previous_left_keypoints
-                    # trainIdx is the index of the feature in keypoints0
-                    table_data.append([previous_left_keypoints[m[0].queryIdx].pt, current_left_keypoints[m[0].trainIdx].pt])
-                print(tabulate(table_data, headers=["Left k-1", "Left k"], tablefmt="fancy_grid"))
-
-            # Keep track of matched keypoints for l,k-1 <-> r,k-1
-            previous_matched_left_points = [previous_left_keypoints[match[0].queryIdx].pt for match in filtered_left_matches]
-            current_matched_left_points = [current_left_keypoints[match[0].trainIdx].pt for match in filtered_left_matches]
-
-            # Find matches between previous left and right images
-            left_to_right_matches = self.find_matches(previous_left_keypoints, previous_right_keypoints, previous_left_descriptors, previous_right_descriptors)
-            filtered_left_to_right_matches = self.filter_matches(left_to_right_matches, self.threshold)
-
-            # Keep track of matched keypoints between previous left and right images
-            matched_left_points_in_left_to_right = [previous_left_keypoints[match[0].queryIdx].pt for match in filtered_left_to_right_matches]
-            matched_right_points_in_left_to_right = [previous_right_keypoints[match[0].trainIdx].pt for match in filtered_left_to_right_matches]
-
-
-            # Find indices of matched l,k-1 in step 2 in l,k-1 from step 1
-            matched_indices = [(i, previous_matched_left_points.index(item)) for i, item in enumerate(matched_left_points_in_left_to_right) if item in previous_matched_left_points]
+            if idx == 1:
+                prev_prev_image = prev_image
+                prev_image = current_image
+                continue
             
-            # indices = [i for i, item in enumerate(list_of_matches1_left_prev) if item in list_of_matches0_left_prev]
+            # Detect features in prev_prev_image, prev_image, and current_image
+            keypoints_prev_prev, descriptors_prev_prev = self.detect_features(prev_prev_image) # k - 2
+            keypoints_prev, descriptors_prev = self.detect_features(prev_image) # k - 1
+            keypoints_current, descriptors_current = self.detect_features(current_image) # anchor
 
-            # Use the indices from step 3 to filter out the matched l,k from step 1 - ensure that the feature
+            # Find matches between prev_prev_image and prev_image
+            matches_prev_prev_to_prev = self.find_matches(keypoints_prev_prev, keypoints_prev, descriptors_prev_prev, descriptors_prev) # matches_1
+            filtered_matches_prev_prev_to_prev_to_prev = self.filter_matches(matches_prev_prev_to_prev, self.threshold) # matches_1
+
+            # Find matches between prev_image and current_image
+            matches_prev_to_current = self.find_matches(keypoints_prev, keypoints_current, descriptors_prev, descriptors_current) # matches_2
+            filtered_matches_prev_to_current = self.filter_matches(matches_prev_to_current, self.threshold) # matches_2
+
+            # Filter matches between prev_prev_image and prev_image
+            matches_prev_prev_points = [keypoints_prev_prev[m[0].queryIdx].pt for m in filtered_matches_prev_prev_to_prev_to_prev] # k - 2_img
+            matches_prev_points = [keypoints_prev[m[0].trainIdx].pt for m in filtered_matches_prev_prev_to_prev_to_prev] # k - 1_img
+
+            # # Find indices of matched points between prev_prev_image and prev_image
+            # indices = [(i, matches_prev_prev_points.index(item)) for i, item in enumerate(matches_prev_points) if item in matches_prev_points]
+
+            # # Use the indices from step 3 to filter out the matched points from step 1 - ensure that the feature
+            # # being considered is in the list of matches from step 1.
+            # filtered_matches_prev_prev_to_prev_to_prev = [filtered_matches_prev_prev_to_prev_to_prev[i[1]] for i in indices] # matches_1*
+
+            # Filter matches between prev_image and current_image
+            matches_prev_points_new = [keypoints_prev[m[0].queryIdx].pt for m in filtered_matches_prev_to_current] # k - 1_img
+            matches_current_points = [keypoints_current[m[0].trainIdx].pt for m in filtered_matches_prev_to_current] # anchor_img
+
+            # Find indices of matched points between prev_image and current_image
+            indices = [(i, matches_prev_points.index(item)) for i, item in enumerate(matches_prev_points_new) if item in matches_prev_points]
+
+            # Use the indices from step 3 to filter out the matched points from step 1 - ensure that the feature
             # being considered is in the list of matches from step 1.
-            
-            filtered_current_left_matches = [filtered_left_matches[i[1]] for i in matched_indices]
+            # filtered_matches_prev_prev_to_prev_to_prev = [filtered_matches_prev_prev_to_prev_to_prev[i[1]] for i in indices] # matches_1*
+            # filtered_matches_prev_to_current = [filtered_matches_prev_to_current[i[0]] for i in indices] # matches_2*
 
-            # Triangulate and compute the pose if sufficient matches are found
-            if len(filtered_left_to_right_matches) > self.min_matches:
-                triangulated_points = self.triangulate_points([filtered_left_to_right_matches[i[0]] for i in matched_indices], 
-                                                            previous_left_keypoints, previous_right_keypoints)
-                
-                # print(triangulated_points)
+            if len(filtered_matches_prev_prev_to_prev_to_prev) > self.min_matches:
+                # Triangulate points for keypoint matches between prev_prev_image and prev_image
+                _3D_point = self.triangulate_points([filtered_matches_prev_prev_to_prev_to_prev[i[1]] for i in indices], keypoints_prev_prev, keypoints_prev)
 
-                # Project points from step 5 to l,k in step 4
-                Tk = self.compute_pnp(triangulated_points, current_left_keypoints, filtered_current_left_matches)
+                # Triangulate points for keypoint matches between prev_image and current_image
+                _3D_point_current = self.triangulate_points([filtered_matches_prev_to_current[i[0]] for i in indices], keypoints_prev, keypoints_current)
 
-                # Invert the Tk matrix 
+                # Calculate the relative scale factor
+                # Compute the pairwise distances for consecutive points in the first set
+                distances_k_1_k = np.linalg.norm(_3D_point[:-1] - _3D_point[1:], axis=1)
+
+                # Compute the pairwise distances for consecutive points in the second set
+                distances_k_k1 = np.linalg.norm(_3D_point_current[:-1] - _3D_point_current[1:], axis=1)
+
+                # Compute the scale factors for each pair of points
+                scale_factors = distances_k_1_k / distances_k_k1
+
+                # Compute the mean scale factor, excluding outliers
+                # count all nan values
+                count = np.count_nonzero(np.isnan(scale_factors))
+                # print("Count: ", count)
+
+                # REMOVE NAN VALUES
+                scale_factors = scale_factors[~np.isnan(scale_factors)]
+
+                # Compute the mean scale factor
+                r_k = np.sum(scale_factors) / len(scale_factors - count)
+
+
+                # print("Scale: ", distances_k_1_k.shape, distances_k_k1.shape, scale_factors.shape, r_k)
+                # print("Scale: ", r_k)
+
+                # Project points from prev_prev_image to prev_image and compute PnP to get the pose Tk
+                Tk = self.compute_pnp(_3D_point, keypoints_current, [filtered_matches_prev_to_current[i[0]] for i in indices])
+
+                # Invert the transformation matrix
                 Tk = np.linalg.inv(Tk)
+
+                # Rescale the translation vector
+                Tk[:3, 3] /= Tk[2, 3]
+                Tk[:3, 3] *= r_k
 
                 # Concatenate Tk to the previous pose
                 self.pose = self.concatenate_transform(self.pose, Tk)
-                # self.pose = self.concatenate_transform(Tk, self.pose)
 
                 # print("Pose: ", self.pose)
 
@@ -427,17 +440,21 @@ class StereoOdometry:
 
                 # Plot trajectory
                 self.translation_history.append(self.pose[:3, 3].flatten())
-                # if self.show_plots:
-
             else:
-                    print("Not enough matches to compute pose.")
+                print("Not enough matches to compute pose.")
 
-            # Update previous images for next iteration
-            previous_left_image = left_image
-            previous_right_image = right_image
+            # Reset the previous images, keypoints, descriptors, and matches
+            prev_prev_image = prev_image
+            prev_image = current_image
+            keypoints_prev_prev = keypoints_prev
+            keypoints_prev = keypoints_current
+            descriptors_prev_prev = descriptors_prev
+            matches_previous_previous = matches_prev_points
+            matches_previous = matches_current_points
+            filtered_matches_previous = filtered_matches_prev_to_current
 
-        # Plot the final trajectory
-        # self.plot_trajectory(self.translation_history, image_index)
+        # self.plotter.plot_trajectory(self.translation_history, self.plot_title("Trajectory", self.sequence, {"left": f"{idx:06d}"}))
+
 
     def main(self):
         # Create the results directory if it does not exist
@@ -449,5 +466,9 @@ class StereoOdometry:
         
 
 if __name__ == "__main__":
+    #TODO: Create a config file and place all the parameters needed there
+    #TODO: Create a requirements.txt file
+
     pose_estimator = StereoOdometry()
+
     pose_estimator.main()

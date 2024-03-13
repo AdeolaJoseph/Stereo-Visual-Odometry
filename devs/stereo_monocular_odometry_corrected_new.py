@@ -104,18 +104,23 @@ class StereoOdometry:
 
         Returns:
             None
- 
         """
         # Extracting the intrinsic camera matrix using RQ decomposition
         # K, R = np.linalg.qr(np.linalg.inv(self.P0[:, :3]))
         # K = np.linalg.inv(K)
+        
         # K /= K[2, 2]  # Normalize the matrix
+
         # self.focal_lengths = (K[0, 0], K[1, 1])
         # self.principal_point = (K[0, 2], K[1, 2])
         # self.skew = K[0, 1]
 
         # Use cv2.decomposeProjectionMatrix to extract the rotation and translation matrices
         intrinsic, rotation, translation, _, _, _, _ = cv2.decomposeProjectionMatrix(P0)
+
+        # print(f"Focal Lengths: {self.focal_lengths}")
+        # print(f"Principal Point: {self.principal_point}")
+        # print(f"Skew: {self.skew}")
         return intrinsic
         
     def load_projection_matrices(self, sequence: int) -> Tuple[np.ndarray, np.ndarray]:
@@ -128,6 +133,8 @@ class StereoOdometry:
         Returns:
             tuple: A tuple containing two numpy arrays representing the projection matrices P0 and P1.
         """
+        #TODO: We need to check the format of the file containing the projection matrix  
+        # Load camera calibration data for the sequence
         calib_file_path = os.path.join(self.base_dir, "dataset", "sequences", f"{sequence:02d}", "calib.txt")
         try:
             with open(calib_file_path, 'r') as file:
@@ -199,20 +206,18 @@ class StereoOdometry:
         image_points = np.float32([keypoints1[m[0].trainIdx].pt for m in matches])
         object_points = Xk_minus_1[:len(image_points)]
         # Finds an object pose from 3D-2D point correspondences using the RANSAC scheme
-        success, rotation_vector, translation_vector, inliers = cv2.solvePnPRansac(object_points, image_points, self.intrinsic_params1[:, :3], None, flags=cv2.SOLVEPNP_ITERATIVE, confidence=0.9999, reprojectionError=1)
+        # success, rotation_vector, translation_vector, inliers = cv2.solvePnPRansac(object_points, image_points, self.intrinsic_params1[:, :3], None, flags=cv2.SOLVEPNP_ITERATIVE, confidence=0.9999, reprojectionError=1)
         # _, rotation_vector, translation_vector, _ = cv2.solvePnPRansac(object_points, image_points, self.projMatr1[:, :3], None, flags=cv2.SOLVEPNP_ITERATIVE, confidence=0.9999, reprojectionError=1)
+        success, rotation_vector, translation_vector, inliers = cv2.solvePnPRansac(object_points, image_points, self.intrinsic_params1[:, :3], None)
         # _, rotation_vector, translation_vector, _ = cv2.solvePnPRansac(object_points, image_points, self.projMatr1[:, :3], None)
 
         if success:
             # Pose refinement using Levenberg-Marquardt optimization
-            # Optional step included to improve results
             rotation_vector, translation_vector = cv2.solvePnPRefineLM(
                 object_points[inliers], image_points[inliers], 
                 self.intrinsic_params1[:, :3], None, rotation_vector, translation_vector)
 
         return self.construct_se3_matrix(rotation_vector, translation_vector)
-    
-
 
     def construct_se3_matrix(self, rotation_vector: np.ndarray, translation_vector: np.ndarray) -> np.ndarray:
         """
@@ -246,6 +251,24 @@ class StereoOdometry:
         keypoints, descriptors = sift.detectAndCompute(image, None)
         return keypoints, descriptors
     
+    # def find_matches(self, keypoints0: list, keypoints1: list, descriptors0: np.ndarray, descriptors1: np.ndarray) -> list:
+    #     """
+    #     Finds matches between keypoints and descriptors using the BFMatcher algorithm.
+
+    #     Args:
+    #         keypoints0 (list): List of keypoints from the first image.
+    #         keypoints1 (list): List of keypoints from the second image.
+    #         descriptors0 (ndarray): Descriptors of keypoints from the first image.
+    #         descriptors1 (ndarray): Descriptors of keypoints from the second image.
+
+    #     Returns:
+    #         list: List of matches between keypoints.
+    #     """
+    #     # Use BFMatcher to match features
+    #     bf = cv2.BFMatcher(cv2.NORM_L2, crossCheck=True)
+    #     matches = bf.match(descriptors0, descriptors1)
+    #     matches = sorted(matches, key=lambda x: x.distance)
+    #     return matches
     
     def find_matches(self, keypoints0: list, keypoints1: list, descriptors0: np.ndarray, descriptors1: np.ndarray) -> list:
         """
@@ -319,125 +342,132 @@ class StereoOdometry:
                 f"{pose[0,0]} {pose[0,1]} {pose[0,2]} {pose[0,3]} "
                 f"{pose[1,0]} {pose[1,1]} {pose[1,2]} {pose[1,3]} "
                 f"{pose[2,0]} {pose[2,1]} {pose[2,2]} {pose[2,3]}\n")
-
-
-
-    def run(self, results_filepath: str) -> None:
+                                
+    def run(self, p_results: str) -> None:
         """
-        Runs the stereo odometry algorithm on a sequence of stereo images.
+        Runs the stereo monocular odometry algorithm on a sequence of images using only the left images.
 
         Args:
-            results_filepath (str): The filepath to save the odometry results.
+            p_results (str): The filepath to save the results.
 
         Returns:
             None
         """
-        is_paused = False
-        for image_index, (left_image, right_image) in enumerate(tqdm(self.dataloader)):
+        pause = False
+        for idx, (image_current, image1) in enumerate(tqdm(self.dataloader)):
             # Convert the images to NumPy arrays
-            left_image = left_image.numpy().squeeze().astype(np.uint8)
-            right_image = right_image.numpy().squeeze().astype(np.uint8)
+            image_current = image_current.numpy().squeeze().astype(np.uint8)
+            image1 = image1.numpy().squeeze().astype(np.uint8)
 
-            if left_image is None or right_image is None:
+            if image_current is None:
                 break
-
-            # Save the first image to start feature matching with the second set
-            if image_index == 0:
-                self.save_pose_kitti(results_filepath, self.pose)
-                previous_left_image = left_image
-                previous_right_image = right_image
+            # if image1 is None:
+            #     break    
+            #When you load the first  image, you have to save it to get the second set of images to start the feature matching  
+            if idx == 0:
+                self.save_pose_kitti(p_results, self.pose)
+                image_prev = image_current
+                # image1_prev = image1
                 continue
 
-            # Control for pausing the process
-            key_press = cv2.waitKey(1000000 if is_paused else 1)
-            if key_press == ord(' '):
-                is_paused = not is_paused
+            if idx == 1:
+                # Detect features in I,k-1 and I,k
+                keypoints_prev, descriptors_prev = self.detect_features(image_prev) # k - 1
+                keypoints_current, descriptors_current = self.detect_features(image_current) # anchor
 
-            # Detect features in the previous and current left images
-            previous_left_keypoints, previous_left_descriptors = self.detect_features(previous_left_image)
-            previous_right_keypoints, previous_right_descriptors = self.detect_features(previous_right_image)
-            current_left_keypoints, current_left_descriptors = self.detect_features(left_image)
+                # Find matches I,k-1 <-> I,k
+                matches = self.find_matches(keypoints_prev, keypoints_current, descriptors_prev, descriptors_current) # matches_1
 
-            # Optional: Draw keypoints
-            if self.show_plots:
-                self.plotter.draw_keypoints(previous_left_image, previous_left_keypoints, self.plot_title("Keypoints", self.sequence, {"left": f"{image_index-1:06d}"}))
-                self.plotter.draw_keypoints(previous_right_image, previous_right_keypoints, self.plot_title("Keypoints", self.sequence, {"right": f"{image_index-1:06d}"}))
+                # Draw matches
+                filtered_matches = self.filter_matches(matches, self.threshold)
+                if self.show_plots:
+                    self.plotter.draw_matches(image_prev, image_current, keypoints_prev, keypoints_current, filtered_matches, 
+                                            self.plot_title("Matches", self.sequence, {"left": f"{idx-1:06d}", "right": f"{idx:06d}"}))
+                    
+                # Keep history of matches for I,k-1 <-> I,k
+                matches_previous = [keypoints_prev[m[0].queryIdx].pt for m in filtered_matches] # k - 1_img
+                matches_current = [keypoints_current[m[0].trainIdx].pt for m in filtered_matches] # anchor_img
+                    
+                # Prepare data for tabulate
+                if self.show_tables:
+                    table_data = []
+                    for m in filtered_matches:
+                        # queryIdx is the index of the feature in keypoints_prev
+                        # trainIdx is the index of the feature in keypoints_current
+                        table_data.append([keypoints_prev[m[0].queryIdx].pt, keypoints_current[m[0].trainIdx].pt])
+                    print(tabulate(table_data, headers=["Left k-1", "Left k"], tablefmt="fancy_grid"))
 
-            # Find matches between previous and current left images
-            left_matches = self.find_matches(previous_left_keypoints, current_left_keypoints, previous_left_descriptors, current_left_descriptors)
-            filtered_left_matches = self.filter_matches(left_matches, self.threshold)
+                # # Triangulate points from filtered matches
+                # _3D_point = self.triangulate_points(filtered_matches, keypoints_prev, keypoints_current)
+                # print("3D - in: ", _3D_point.shape)
 
-            # Optional: Draw matches
-            if self.show_plots:
-                self.plotter.draw_matches(previous_left_image, left_image, previous_left_keypoints, current_left_keypoints, filtered_left_matches, 
-                                self.plot_title("Matches", self.sequence, {"left": f"{image_index-1:06d}", "right": f"{image_index:06d}"}))
+                # Reset the previous images, keypoints, descriptors, and matches
+                image_prev = image_current
+                keypoints_prev_prev = keypoints_prev # k - 1
+                keypoints_prev = keypoints_current # anchor
+                descriptors_prev = descriptors_current
+                matches_previous_previous = matches_previous
+                matches_previous = matches_current # anchor_img
+                filtered_matches_previous = filtered_matches # matches_1
+                continue
 
-            # Prepare data for tabulate
-            if self.show_tables:
-                table_data = []
-                for m in filtered_left_matches:
-                    # queryIdx is the index of the feature in previous_left_keypoints
-                    # trainIdx is the index of the feature in keypoints0
-                    table_data.append([previous_left_keypoints[m[0].queryIdx].pt, current_left_keypoints[m[0].trainIdx].pt])
-                print(tabulate(table_data, headers=["Left k-1", "Left k"], tablefmt="fancy_grid"))
+            # Detect features in I,k
+            keypoints_current, descriptors_current = self.detect_features(image_current)
 
-            # Keep track of matched keypoints for l,k-1 <-> r,k-1
-            previous_matched_left_points = [previous_left_keypoints[match[0].queryIdx].pt for match in filtered_left_matches]
-            current_matched_left_points = [current_left_keypoints[match[0].trainIdx].pt for match in filtered_left_matches]
+            # Find matches I,k-1 <-> I,k
+            matches = self.find_matches(keypoints_prev, keypoints_current, descriptors_prev, descriptors_current) # matches_2
 
-            # Find matches between previous left and right images
-            left_to_right_matches = self.find_matches(previous_left_keypoints, previous_right_keypoints, previous_left_descriptors, previous_right_descriptors)
-            filtered_left_to_right_matches = self.filter_matches(left_to_right_matches, self.threshold)
+            # Filter matches
+            filtered_matches = self.filter_matches(matches, self.threshold) # matches_2
 
-            # Keep track of matched keypoints between previous left and right images
-            matched_left_points_in_left_to_right = [previous_left_keypoints[match[0].queryIdx].pt for match in filtered_left_to_right_matches]
-            matched_right_points_in_left_to_right = [previous_right_keypoints[match[0].trainIdx].pt for match in filtered_left_to_right_matches]
+            # Keep history of matches for I,k-1 <-> I,k
+            matches_previous_new = [keypoints_prev[m[0].queryIdx].pt for m in filtered_matches] # anchor_img_new
+            matches_current = [keypoints_current[m[0].trainIdx].pt for m in filtered_matches] # k_img
 
-
-            # Find indices of matched l,k-1 in step 2 in l,k-1 from step 1
-            matched_indices = [(i, previous_matched_left_points.index(item)) for i, item in enumerate(matched_left_points_in_left_to_right) if item in previous_matched_left_points]
-            
-            # indices = [i for i, item in enumerate(list_of_matches1_left_prev) if item in list_of_matches0_left_prev]
+            # Find indices of matched 
+            indices = [(i, matches_previous.index(item)) for i, item in enumerate(matches_previous_new) if item in matches_previous]
 
             # Use the indices from step 3 to filter out the matched l,k from step 1 - ensure that the feature
             # being considered is in the list of matches from step 1.
-            
-            filtered_current_left_matches = [filtered_left_matches[i[1]] for i in matched_indices]
+            filtered_matches2 = [filtered_matches_previous[i[1]] for i in indices] # matches_1*
 
-            # Triangulate and compute the pose if sufficient matches are found
-            if len(filtered_left_to_right_matches) > self.min_matches:
-                triangulated_points = self.triangulate_points([filtered_left_to_right_matches[i[0]] for i in matched_indices], 
-                                                            previous_left_keypoints, previous_right_keypoints)
-                
-                # print(triangulated_points)
+            if len(filtered_matches) > self.min_matches:
+                # Triangulate points from filtered matches
+                _3D_point = self.triangulate_points(filtered_matches2, keypoints_prev_prev, keypoints_prev)
 
-                # Project points from step 5 to l,k in step 4
-                Tk = self.compute_pnp(triangulated_points, current_left_keypoints, filtered_current_left_matches)
+                # Project points from I,k-1 to I,k and compute PnP to get the pose Tk
+                Tk = self.compute_pnp(_3D_point, keypoints_current, [filtered_matches[i[0]] for i in indices])
 
-                # Invert the Tk matrix 
-                Tk = np.linalg.inv(Tk)
+                # Invert the transformation matrix 
+                # Tk = np.linalg.inv(Tk)
 
                 # Concatenate Tk to the previous pose
                 self.pose = self.concatenate_transform(self.pose, Tk)
-                # self.pose = self.concatenate_transform(Tk, self.pose)
 
                 # print("Pose: ", self.pose)
 
-                self.save_pose_kitti(results_filepath, self.pose)
+                self.save_pose_kitti(p_results, self.pose)
 
                 # Plot trajectory
                 self.translation_history.append(self.pose[:3, 3].flatten())
-                # if self.show_plots:
-
             else:
-                    print("Not enough matches to compute pose.")
+                print("Not enough matches to compute pose.")
 
-            # Update previous images for next iteration
-            previous_left_image = left_image
-            previous_right_image = right_image
+            # Reset the previous images, keypoints, descriptors, and matches
+            image_prev = image_current
+            keypoints_prev_prev = keypoints_prev
+            keypoints_prev = keypoints_current
+            descriptors_prev = descriptors_current
+            matches_previous_previous = matches_previous
+            matches_previous = matches_current
+            filtered_matches_previous = filtered_matches
 
-        # Plot the final trajectory
-        # self.plot_trajectory(self.translation_history, image_index)
+            # if idx == 1:
+            #     import sys
+            #     sys.exit()
+
+        # self.plotter.plot_trajectory(self.translation_history, self.plot_title("Trajectory", self.sequence, {"left": f"{idx:06d}"}))
+
 
     def main(self):
         # Create the results directory if it does not exist
@@ -449,5 +479,9 @@ class StereoOdometry:
         
 
 if __name__ == "__main__":
+    #TODO: Create a config file and place all the parameters needed there
+    #TODO: Create a requirements.txt file
+
     pose_estimator = StereoOdometry()
+
     pose_estimator.main()

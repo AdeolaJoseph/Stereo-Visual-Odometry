@@ -104,26 +104,21 @@ class StereoOdometry:
 
         Returns:
             None
+ 
         """
         # Extracting the intrinsic camera matrix using RQ decomposition
         # K, R = np.linalg.qr(np.linalg.inv(self.P0[:, :3]))
         # K = np.linalg.inv(K)
-        
         # K /= K[2, 2]  # Normalize the matrix
-
         # self.focal_lengths = (K[0, 0], K[1, 1])
         # self.principal_point = (K[0, 2], K[1, 2])
         # self.skew = K[0, 1]
 
         # Use cv2.decomposeProjectionMatrix to extract the rotation and translation matrices
         intrinsic, rotation, translation, _, _, _, _ = cv2.decomposeProjectionMatrix(P0)
-
-        # print(f"Focal Lengths: {self.focal_lengths}")
-        # print(f"Principal Point: {self.principal_point}")
-        # print(f"Skew: {self.skew}")
         return intrinsic
         
-    def load_projection_matrices(self, sequence: int) -> (np.ndarray, np.ndarray):
+    def load_projection_matrices(self, sequence: int) -> Tuple[np.ndarray, np.ndarray]:
         """
         Load the projection matrices for a given sequence.
 
@@ -133,8 +128,6 @@ class StereoOdometry:
         Returns:
             tuple: A tuple containing two numpy arrays representing the projection matrices P0 and P1.
         """
-        #TODO: We need to check the format of the file containing the projection matrix  
-        # Load camera calibration data for the sequence
         calib_file_path = os.path.join(self.base_dir, "dataset", "sequences", f"{sequence:02d}", "calib.txt")
         try:
             with open(calib_file_path, 'r') as file:
@@ -206,18 +199,20 @@ class StereoOdometry:
         image_points = np.float32([keypoints1[m[0].trainIdx].pt for m in matches])
         object_points = Xk_minus_1[:len(image_points)]
         # Finds an object pose from 3D-2D point correspondences using the RANSAC scheme
-        # success, rotation_vector, translation_vector, inliers = cv2.solvePnPRansac(object_points, image_points, self.intrinsic_params1[:, :3], None, flags=cv2.SOLVEPNP_ITERATIVE, confidence=0.9999, reprojectionError=1)
+        success, rotation_vector, translation_vector, inliers = cv2.solvePnPRansac(object_points, image_points, self.intrinsic_params1[:, :3], None, flags=cv2.SOLVEPNP_ITERATIVE, confidence=0.9999, reprojectionError=1)
         # _, rotation_vector, translation_vector, _ = cv2.solvePnPRansac(object_points, image_points, self.projMatr1[:, :3], None, flags=cv2.SOLVEPNP_ITERATIVE, confidence=0.9999, reprojectionError=1)
-        success, rotation_vector, translation_vector, inliers = cv2.solvePnPRansac(object_points, image_points, self.intrinsic_params1[:, :3], None)
         # _, rotation_vector, translation_vector, _ = cv2.solvePnPRansac(object_points, image_points, self.projMatr1[:, :3], None)
 
         if success:
             # Pose refinement using Levenberg-Marquardt optimization
+            # Optional step included to improve results
             rotation_vector, translation_vector = cv2.solvePnPRefineLM(
                 object_points[inliers], image_points[inliers], 
                 self.intrinsic_params1[:, :3], None, rotation_vector, translation_vector)
 
         return self.construct_se3_matrix(rotation_vector, translation_vector)
+    
+
 
     def construct_se3_matrix(self, rotation_vector: np.ndarray, translation_vector: np.ndarray) -> np.ndarray:
         """
@@ -236,7 +231,7 @@ class StereoOdometry:
         return np.dot(transform1, transform2)
 
     
-    def detect_features(self, image: np.ndarray) -> (list, np.ndarray):
+    def detect_features(self, image: np.ndarray) -> Tuple[list, np.ndarray]:
         """
         Detects features in the given image using the SIFT algorithm.
 
@@ -251,24 +246,6 @@ class StereoOdometry:
         keypoints, descriptors = sift.detectAndCompute(image, None)
         return keypoints, descriptors
     
-    # def find_matches(self, keypoints0: list, keypoints1: list, descriptors0: np.ndarray, descriptors1: np.ndarray) -> list:
-    #     """
-    #     Finds matches between keypoints and descriptors using the BFMatcher algorithm.
-
-    #     Args:
-    #         keypoints0 (list): List of keypoints from the first image.
-    #         keypoints1 (list): List of keypoints from the second image.
-    #         descriptors0 (ndarray): Descriptors of keypoints from the first image.
-    #         descriptors1 (ndarray): Descriptors of keypoints from the second image.
-
-    #     Returns:
-    #         list: List of matches between keypoints.
-    #     """
-    #     # Use BFMatcher to match features
-    #     bf = cv2.BFMatcher(cv2.NORM_L2, crossCheck=True)
-    #     matches = bf.match(descriptors0, descriptors1)
-    #     matches = sorted(matches, key=lambda x: x.distance)
-    #     return matches
     
     def find_matches(self, keypoints0: list, keypoints1: list, descriptors0: np.ndarray, descriptors1: np.ndarray) -> list:
         """
@@ -342,18 +319,20 @@ class StereoOdometry:
                 f"{pose[0,0]} {pose[0,1]} {pose[0,2]} {pose[0,3]} "
                 f"{pose[1,0]} {pose[1,1]} {pose[1,2]} {pose[1,3]} "
                 f"{pose[2,0]} {pose[2,1]} {pose[2,2]} {pose[2,3]}\n")
-                                
-    def run(self, p_results: str) -> None:
+
+
+
+    def run(self, results_filepath: str) -> None:
         """
-        Runs the stereo monocular odometry algorithm on a sequence of images using only the left images.
+        Runs the stereo odometry algorithm on a sequence of stereo images.
 
         Args:
-            p_results (str): The filepath to save the results.
+            results_filepath (str): The filepath to save the odometry results.
 
         Returns:
             None
         """
-        pause = False
+        is_paused = False
         for idx, (image_current, image1) in enumerate(tqdm(self.dataloader)):
             # Convert the images to NumPy arrays
             image_current = image_current.numpy().squeeze().astype(np.uint8)
@@ -365,7 +344,7 @@ class StereoOdometry:
             #     break    
             #When you load the first  image, you have to save it to get the second set of images to start the feature matching  
             if idx == 0:
-                self.save_pose_kitti(p_results, self.pose)
+                self.save_pose_kitti(results_filepath, self.pose)
                 image_prev = image_current
                 # image1_prev = image1
                 continue
@@ -446,7 +425,7 @@ class StereoOdometry:
 
                 # print("Pose: ", self.pose)
 
-                self.save_pose_kitti(p_results, self.pose)
+                self.save_pose_kitti(results_filepath, self.pose)
 
                 # Plot trajectory
                 self.translation_history.append(self.pose[:3, 3].flatten())
@@ -466,7 +445,7 @@ class StereoOdometry:
             #     import sys
             #     sys.exit()
 
-        self.plotter.plot_trajectory(self.translation_history, self.plot_title("Trajectory", self.sequence, {"left": f"{idx:06d}"}))
+        # self.plotter.plot_trajectory(self.translation_history, self.plot_title("Trajectory", self.sequence, {"left": f"{idx:06d}"}))
 
 
     def main(self):
